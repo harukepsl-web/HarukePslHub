@@ -324,36 +324,37 @@ end)
 --// --- UI ---
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 880, 0, 1200); Main.Position = UDim2.new(0.5, -440, 0.5, -600); Main.BackgroundColor3 = Theme.Dark; Main.BorderSizePixel = 0
+-- Размеры уменьшены: Ширина 350, Высота 480
+Main.Size = UDim2.new(0, 350, 0, 480); Main.Position = UDim2.new(0.5, -175, 0.5, -240); Main.BackgroundColor3 = Theme.Dark; Main.BorderSizePixel = 0
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 MakeDraggable(Main)
 
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 140); Title.Text = "SPHERE CONTROL"; Title.TextColor3 = Theme.Main; Title.Font = Enum.Font.GothamBold; Title.TextSize = 14; Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = "SPHERE CONTROL"; Title.TextColor3 = Theme.Main; Title.Font = Enum.Font.GothamBold; Title.TextSize = 16; Title.BackgroundTransparency = 1
 
 local Container = Instance.new("ScrollingFrame", Main)
-Container.Position = UDim2.new(0, 10, 0, 40); Container.Size = UDim2.new(1, -80, 1, -200); Container.BackgroundTransparency = 1; Container.ScrollBarThickness = 0
+Container.Position = UDim2.new(0, 10, 0, 45); Container.Size = UDim2.new(1, -20, 1, -60); Container.BackgroundTransparency = 1; Container.ScrollBarThickness = 2 -- Добавил полосу прокрутки для удобства
 local Layout = Instance.new("UIListLayout", Container); Layout.Padding = UDim.new(0, 6)
 
 local function CreateButton(txt, callback)
     local btn = Instance.new("TextButton", Container)
-    btn.Size = UDim2.new(1, 0, 0, 120); btn.BackgroundColor3 = Theme.Accent; btn.Text = txt; btn.TextColor3 = Theme.Text; btn.Font = Enum.Font.Gotham; btn.TextSize = 12
+    btn.Size = UDim2.new(1, 0, 0, 35); btn.BackgroundColor3 = Theme.Accent; btn.Text = txt; btn.TextColor3 = Theme.Text; btn.Font = Enum.Font.Gotham; btn.TextSize = 14
     Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(callback)
     return btn
 end
 
 local function CreateSlider(txt, min, max, start, callback)
-    local f = Instance.new("Frame", Container); f.Size = UDim2.new(1, 0, 0, 160); f.BackgroundTransparency = 1
-    local l = Instance.new("TextLabel", f); l.Size = UDim2.new(1, 0, 0, 15); l.Text = txt..": "..start; l.TextColor3 = Theme.Text; l.Font = Enum.Font.Gotham; l.TextSize = 30; l.BackgroundTransparency = 1
-    local bg = Instance.new("Frame", f); bg.Size = UDim2.new(1, 0, 0, 4); bg.Position = UDim2.new(0, 0, 0.7, 0); bg.BackgroundColor3 = Theme.Accent
-    local p = Instance.new("Frame", bg); p.Size = UDim2.new(0, 10, 0, 10); p.Position = UDim2.new((start-min)/(max-min), -5, 0.5, -5); p.BackgroundColor3 = Theme.Main; Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
+    local f = Instance.new("Frame", Container); f.Size = UDim2.new(1, 0, 0, 50); f.BackgroundTransparency = 1
+    local l = Instance.new("TextLabel", f); l.Size = UDim2.new(1, 0, 0, 20); l.Text = txt..": "..start; l.TextColor3 = Theme.Text; l.Font = Enum.Font.Gotham; l.TextSize = 14; l.BackgroundTransparency = 1
+    local bg = Instance.new("Frame", f); bg.Size = UDim2.new(1, -10, 0, 4); bg.Position = UDim2.new(0, 5, 0.7, 0); bg.BackgroundColor3 = Theme.Accent
+    local p = Instance.new("Frame", bg); p.Size = UDim2.new(0, 12, 0, 12); p.Position = UDim2.new((start-min)/(max-min), -6, 0.5, -6); p.BackgroundColor3 = Theme.Main; Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
     
     f.InputBegan:Connect(function(i)
         if i.UserInputType == Enum.UserInputType.MouseButton1 then
             local move = RunService.RenderStepped:Connect(function()
                 local perc = math.clamp((UserInputService:GetMouseLocation().X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
-                p.Position = UDim2.new(perc, -5, 0.5, -5)
+                p.Position = UDim2.new(perc, -6, 0.5, -6)
                 local val = math.floor(min + (max - min) * perc)
                 l.Text = txt..": "..val; callback(val)
             end)
@@ -364,11 +365,10 @@ end
 
 -- Elements
 local TargetLbl = Instance.new("TextLabel", Container)
-TargetLbl.Size = UDim2.new(1, 0, 0, 80); TargetLbl.Text = "Target: None"; TargetLbl.TextColor3 = Theme.Main; TargetLbl.BackgroundTransparency = 1; TargetLbl.Font = Enum.Font.Gotham; TargetLbl.TextSize = 30
+TargetLbl.Size = UDim2.new(1, 0, 0, 30); TargetLbl.Text = "Target: None"; TargetLbl.TextColor3 = Theme.Main; TargetLbl.BackgroundTransparency = 1; TargetLbl.Font = Enum.Font.GothamBold; TargetLbl.TextSize = 14
 
 local ToggleBtn = CreateButton("Sphere: OFF", function()
     Config.Enabled = not Config.Enabled
-    Config.Enabled = Config.Enabled -- Force update
 end)
 
 local BindBtn = CreateButton("Bind: " .. Config.SphereKey.Name, function()
@@ -381,30 +381,22 @@ CreateSlider("Radius", 5, 50, 12, function(v) Config.Radius = v end)
 CreateSlider("Speed", 1, 20, 4, function(v) Config.Speed = v end)
 CreateSlider("Height", -10, 20, 5, function(v) Config.Height = v end)
 
-local pList = Instance.new("ScrollingFrame", Container); pList.Size = UDim2.new(1, 0, 0, 320); pList.BackgroundColor3 = Color3.fromRGB(20, 20, 25); pList.BorderSizePixel = 0; Instance.new("UIListLayout", pList)
+-- Список игроков: Сделал его выше (180) и кнопки крупнее (35)
+local pList = Instance.new("ScrollingFrame", Container); pList.Size = UDim2.new(1, 0, 0, 180); pList.BackgroundColor3 = Color3.fromRGB(30, 30, 35); pList.BorderSizePixel = 0; pList.ScrollBarThickness = 4
+local pLayout = Instance.new("UIListLayout", pList); pLayout.Padding = UDim.new(0, 2)
+
 local function UpdateList()
     for _, c in pairs(pList:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
     for _, p in pairs(Players:GetPlayers()) do if p ~= LP then
-        local b = Instance.new("TextButton", pList); b.Size = UDim2.new(1, 0, 0, 20); b.BackgroundColor3 = Theme.Accent; b.Text = p.DisplayName; b.TextColor3 = Theme.Text; b.Font = Enum.Font.Gotham; b.TextSize = 30
+        local b = Instance.new("TextButton", pList)
+        b.Size = UDim2.new(1, -5, 0, 35) -- Кнопки игрока стали выше
+        b.BackgroundColor3 = Theme.Accent
+        b.Text = "  " .. p.DisplayName -- Небольшой отступ текста
+        b.TextColor3 = Theme.Text
+        b.Font = Enum.Font.Gotham
+        b.TextSize = 14
+        b.TextXAlignment = Enum.TextXAlignment.Left -- Выравнивание по левому краю для удобства поиска
         b.MouseButton1Click:Connect(function() Config.Target = p; TargetLbl.Text = "Target: "..p.DisplayName end)
     end end
 end
 UpdateList(); Players.PlayerAdded:Connect(UpdateList); Players.PlayerRemoving:Connect(UpdateList)
-
--- Logic Loops for UI
-RunService.RenderStepped:Connect(function()
-    ToggleBtn.Text = "Sphere: " .. (Config.Enabled and "ON" or "OFF")
-    ToggleBtn.BackgroundColor3 = Config.Enabled and Theme.Main or Theme.Accent
-end)
-
-UserInputService.InputBegan:Connect(function(i, g)
-    if IsBinding and not g then
-        Config.SphereKey = i.KeyCode
-        BindBtn.Text = "Bind: " .. i.KeyCode.Name
-        IsBinding = false
-        return
-    end
-    if g then return end
-    if i.KeyCode == Config.MenuKey then Main.Visible = not Main.Visible
-    elseif i.KeyCode == Config.SphereKey then Config.Enabled = not Config.Enabled end
-end)
