@@ -324,37 +324,37 @@ end)
 --// --- UI ---
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 local Main = Instance.new("Frame", ScreenGui)
--- Компактный размер 240x320
-Main.Size = UDim2.new(0, 240, 0, 320); Main.Position = UDim2.new(0.5, -120, 0.5, -160); Main.BackgroundColor3 = Theme.Dark; Main.BorderSizePixel = 0
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 8)
+-- Оптимальный размер: Ширина 300, Высота 400
+Main.Size = UDim2.new(0, 300, 0, 400); Main.Position = UDim2.new(0.5, -150, 0.5, -200); Main.BackgroundColor3 = Theme.Dark; Main.BorderSizePixel = 0
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
 MakeDraggable(Main)
 
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 30); Title.Text = "SPHERE CONTROL"; Title.TextColor3 = Theme.Main; Title.Font = Enum.Font.GothamBold; Title.TextSize = 12; Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, 0, 0, 35); Title.Text = "SPHERE CONTROL"; Title.TextColor3 = Theme.Main; Title.Font = Enum.Font.GothamBold; Title.TextSize = 14; Title.BackgroundTransparency = 1
 
 local Container = Instance.new("ScrollingFrame", Main)
-Container.Position = UDim2.new(0, 8, 0, 35); Container.Size = UDim2.new(1, -16, 1, -45); Container.BackgroundTransparency = 1; Container.ScrollBarThickness = 2
-local Layout = Instance.new("UIListLayout", Container); Layout.Padding = UDim.new(0, 4)
+Container.Position = UDim2.new(0, 10, 0, 40); Container.Size = UDim2.new(1, -20, 1, -50); Container.BackgroundTransparency = 1; Container.ScrollBarThickness = 2
+local Layout = Instance.new("UIListLayout", Container); Layout.Padding = UDim.new(0, 5)
 
 local function CreateButton(txt, callback)
     local btn = Instance.new("TextButton", Container)
-    btn.Size = UDim2.new(1, 0, 0, 28); btn.BackgroundColor3 = Theme.Accent; btn.Text = txt; btn.TextColor3 = Theme.Text; btn.Font = Enum.Font.Gotham; btn.TextSize = 12
+    btn.Size = UDim2.new(1, 0, 0, 32); btn.BackgroundColor3 = Theme.Accent; btn.Text = txt; btn.TextColor3 = Theme.Text; btn.Font = Enum.Font.Gotham; btn.TextSize = 13
     Instance.new("UICorner", btn)
     btn.MouseButton1Click:Connect(callback)
     return btn
 end
 
 local function CreateSlider(txt, min, max, start, callback)
-    local f = Instance.new("Frame", Container); f.Size = UDim2.new(1, 0, 0, 40); f.BackgroundTransparency = 1
-    local l = Instance.new("TextLabel", f); l.Size = UDim2.new(1, 0, 0, 15); l.Text = txt..": "..start; l.TextColor3 = Theme.Text; l.Font = Enum.Font.Gotham; l.TextSize = 11; l.BackgroundTransparency = 1
-    local bg = Instance.new("Frame", f); bg.Size = UDim2.new(1, -10, 0, 3); bg.Position = UDim2.new(0, 5, 0.7, 0); bg.BackgroundColor3 = Theme.Accent
-    local p = Instance.new("Frame", bg); p.Size = UDim2.new(0, 8, 0, 8); p.Position = UDim2.new((start-min)/(max-min), -4, 0.5, -4); p.BackgroundColor3 = Theme.Main; Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
+    local f = Instance.new("Frame", Container); f.Size = UDim2.new(1, 0, 0, 45); f.BackgroundTransparency = 1
+    local l = Instance.new("TextLabel", f); l.Size = UDim2.new(1, 0, 0, 18); l.Text = txt..": "..start; l.TextColor3 = Theme.Text; l.Font = Enum.Font.Gotham; l.TextSize = 12; l.BackgroundTransparency = 1
+    local bg = Instance.new("Frame", f); bg.Size = UDim2.new(1, -10, 0, 4); bg.Position = UDim2.new(0, 5, 0.7, 0); bg.BackgroundColor3 = Theme.Accent
+    local p = Instance.new("Frame", bg); p.Size = UDim2.new(0, 10, 0, 10); p.Position = UDim2.new((start-min)/(max-min), -5, 0.5, -5); p.BackgroundColor3 = Theme.Main; Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
     
     f.InputBegan:Connect(function(i)
         if i.UserInputType == Enum.UserInputType.MouseButton1 then
             local move = RunService.RenderStepped:Connect(function()
                 local perc = math.clamp((UserInputService:GetMouseLocation().X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
-                p.Position = UDim2.new(perc, -4, 0.5, -4)
+                p.Position = UDim2.new(perc, -5, 0.5, -5)
                 local val = math.floor(min + (max - min) * perc)
                 l.Text = txt..": "..val; callback(val)
             end)
@@ -365,7 +365,7 @@ end
 
 -- Elements
 local TargetLbl = Instance.new("TextLabel", Container)
-TargetLbl.Size = UDim2.new(1, 0, 0, 20); TargetLbl.Text = "Target: None"; TargetLbl.TextColor3 = Theme.Main; TargetLbl.BackgroundTransparency = 1; TargetLbl.Font = Enum.Font.GothamBold; TargetLbl.TextSize = 11
+TargetLbl.Size = UDim2.new(1, 0, 0, 25); TargetLbl.Text = "Target: None"; TargetLbl.TextColor3 = Theme.Main; TargetLbl.BackgroundTransparency = 1; TargetLbl.Font = Enum.Font.GothamBold; TargetLbl.TextSize = 12
 
 local ToggleBtn = CreateButton("Sphere: OFF", function()
     Config.Enabled = not Config.Enabled
@@ -382,19 +382,19 @@ CreateSlider("Speed", 1, 20, 4, function(v) Config.Speed = v end)
 CreateSlider("Height", -10, 20, 5, function(v) Config.Height = v end)
 
 -- Player List
-local pList = Instance.new("ScrollingFrame", Container); pList.Size = UDim2.new(1, 0, 0, 120); pList.BackgroundColor3 = Color3.fromRGB(25, 25, 30); pList.BorderSizePixel = 0; pList.ScrollBarThickness = 3
-local pLayout = Instance.new("UIListLayout", pList); pLayout.Padding = UDim.new(0, 2)
+local pList = Instance.new("ScrollingFrame", Container); pList.Size = UDim2.new(1, 0, 0, 140); pList.BackgroundColor3 = Color3.fromRGB(25, 25, 30); pList.BorderSizePixel = 0; pList.ScrollBarThickness = 3
+local pLayout = Instance.new("UIListLayout", pList); pLayout.Padding = UDim.new(0, 3)
 
 local function UpdateList()
     for _, c in pairs(pList:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
     for _, p in pairs(Players:GetPlayers()) do if p ~= LP then
         local b = Instance.new("TextButton", pList)
-        b.Size = UDim2.new(1, -5, 0, 24) 
+        b.Size = UDim2.new(1, -5, 0, 28) 
         b.BackgroundColor3 = Theme.Accent
         b.Text = "  " .. p.DisplayName 
         b.TextColor3 = Theme.Text
         b.Font = Enum.Font.Gotham
-        b.TextSize = 11
+        b.TextSize = 12
         b.TextXAlignment = Enum.TextXAlignment.Left 
         b.MouseButton1Click:Connect(function() Config.Target = p; TargetLbl.Text = "Target: "..p.DisplayName end)
     end end
